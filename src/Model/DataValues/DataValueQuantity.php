@@ -18,8 +18,15 @@ class DataValueQuantity extends DataValue
     public function __construct($data)
     {
         $this->setAmount($data['amount']);
-        $this->setUpperBound($data['upperBound']);
-        $this->setLowerBound($data['lowerBound']);
+
+        if (isset($data['upperBound'])){
+            $this->setUpperBound($data['upperBound']);
+        }
+
+        if (isset($data['lowerBound'])){
+            $this->setLowerBound($data['lowerBound']);
+        }
+        
         $this->setUnit($data['unit']);
     }
 
