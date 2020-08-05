@@ -111,7 +111,9 @@ class EntityBuilder
         {
             foreach ($propertyClaimsJSON as $claimJSON){
                 $json = $claimJSON['mainsnak'];
-                $claims[] = $this->buildSnak($json);
+                $snak = $this->buildSnak($json);
+                $this->hydrateQualifiers($claimJSON, $snak);
+                $claims[] = $snak;
             }
         }
 
@@ -155,5 +157,21 @@ class EntityBuilder
         $datavalue = array('type' => $type, 'value' => $value);
 
         $snak->setDatavalue($datavalue);
+    }
+
+    protected function hydrateQualifiers($claimJSON, Snak $snak)
+    {
+        if (!isset($claimJSON['qualifiers'])){
+            return;
+        }
+
+        foreach ($claimJSON['qualifiers'] as $qualifiersJSON)
+        {
+            foreach ($qualifiersJSON as $qualifierJSON)
+            {
+                $qualifier = $this->buildSnak($qualifierJSON);
+                $snak->addQualifier($qualifier);
+            }
+        }
     }
 }

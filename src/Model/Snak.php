@@ -8,6 +8,7 @@ class Snak extends DataModel
     protected $property;
     protected $datatype;
     protected $datavalue;
+    protected $qualifiers = array();
 
     /**
      * Snak constructor.
@@ -18,7 +19,7 @@ class Snak extends DataModel
         $this->snaktype = $data['snaktype'];
         $this->property = $data['property'];
         $this->datatype = $data['datatype'];
-        $this->datavalue = $data['datavalue'];
+        $this->datavalue = isset($data['datavalue']) ? $data['datavalue'] : null;
     }
 
     /**
@@ -85,6 +86,27 @@ class Snak extends DataModel
         $this->datavalue = $datavalue;
     }
 
+    /**
+     * @return array
+     */
+    public function getQualifiers()
+    {
+        return $this->qualifiers;
+    }
+
+    /**
+     * @param array $qualifiers
+     */
+    public function setQualifiers($qualifiers)
+    {
+        $this->qualifiers = $qualifiers;
+    }
+
+    public function addQualifier($qualifier)
+    {
+        $this->qualifiers[] = $qualifier;
+    }
+
     public function jsonSerialize()
     {
         return array(
@@ -92,6 +114,7 @@ class Snak extends DataModel
             'property' => $this->getProperty(),
             'datatype' => $this->getDatatype(),
             'datavalue' => $this->getDatavalue(),
+            'qualifiers' => $this->getQualifiers(),
         );
     }
 
