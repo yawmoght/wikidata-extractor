@@ -21,10 +21,10 @@ class WikidataClient
     /**
      * WikidataClient constructor.
      */
-    public function __construct()
+    public function __construct($allowedClaims = array())
     {
         $this->guzzleClient = new Client();
-        $this->entitiesBuilder = new EntityBuilder();
+        $this->entitiesBuilder = new EntityBuilder($allowedClaims);
     }
 
     /**

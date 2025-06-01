@@ -10,6 +10,17 @@ use Model\DataValues\DataValueTime;
 
 class EntityBuilder
 {
+    protected $allowedClaims = array();
+
+    /**
+     * @param $allowedClaims
+     */
+    public function __construct($allowedClaims)
+    {
+        $this->allowedClaims = $allowedClaims;
+    }
+
+
     public function buildEntities($response)
     {
         $entities = array();
@@ -109,6 +120,10 @@ class EntityBuilder
         $claims = array();
         foreach ($claimsJSON as $property => $propertyClaimsJSON)
         {
+            if (!empty($this->allowedClaims) && !in_array($property, $this->allowedClaims)){
+                continue;
+            }
+
             foreach ($propertyClaimsJSON as $claimJSON){
                 $json = $claimJSON['mainsnak'];
                 $snak = $this->buildSnak($json);
