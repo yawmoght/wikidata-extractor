@@ -147,6 +147,11 @@ class EntityBuilder
     protected function hydrateDataValue(Snak $snak)
     {
         $datavalueJSON = $snak->getDatavalue();
+        if (empty($datavalueJSON)){
+            $snak->setDatavalue(array());
+            return;
+        }
+
         $type = $datavalueJSON['type'];
         $valueJSON = $datavalueJSON['value'];
 
