@@ -17,24 +17,14 @@ class WikidataClient
     protected $entitiesBuilder;
 
     protected $entities = array();
-    protected $entitiesLimit = 1;
+    protected $entitiesLimit = 10;
     /**
      * WikidataClient constructor.
      */
-    public function __construct($allowedClaims = array())
+    public function __construct($allowedClaims = array(), $entitiesLimit = 1)
     {
         $this->guzzleClient = new Client();
         $this->entitiesBuilder = new EntityBuilder($allowedClaims);
-    }
-
-    /**
-     * @param int $entitiesLimit
-     */
-    public function setEntitiesLimit($entitiesLimit)
-    {
-        if ($entitiesLimit < 1){
-            $entitiesLimit = 1;
-        }
         $this->entitiesLimit = $entitiesLimit;
     }
 
@@ -60,23 +50,21 @@ class WikidataClient
     /**
      * Executes request with queued entities, clears the queue and returns response.
      */
-    public function requestQueued()
+    public function requestAndCleanQueued()
     {
-        $response = $this->checkRequest();
+        $response = $this->checkRequest(true);
         $this->entities = array();
 
         return $response;
     }
 
-    protected function checkRequest()
+    protected function checkRequest($force = false)
     {
-        if (!$this->isRequestNeeded()) {
+        if (!$force && !$this->isRequestNeeded()) {
             return array();
         }
 
-        $uri = $this->buildUri();
-        $clientOptions = $this->buildOptions();
-        $response = $this->guzzleClient->get($uri, $clientOptions);
+        $response = $this->fetchResponse();
 
         $jsonString = $response->getBody()->getContents();
 
@@ -86,6 +74,12 @@ class WikidataClient
     protected function isRequestNeeded()
     {
         return count($this->entities) >= $this->entitiesLimit;
+    }
+
+    protected function fetchResponse(){
+        $uri = $this->buildUri();
+        $clientOptions = $this->buildOptions();
+        return $this->guzzleClient->get($uri, $clientOptions);
     }
 
     protected function buildUri()
