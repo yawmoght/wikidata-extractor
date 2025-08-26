@@ -18,14 +18,17 @@ class WikidataClient
 
     protected $entities = array();
     protected $entitiesLimit = 10;
+
+    protected $userClient;
     /**
      * WikidataClient constructor.
      */
-    public function __construct($allowedClaims = array(), $entitiesLimit = 1)
+    public function __construct($allowedClaims = array(), $entitiesLimit = 1, $userClient = 'WikidataClient')
     {
         $this->guzzleClient = new Client();
         $this->entitiesBuilder = new EntityBuilder($allowedClaims);
         $this->entitiesLimit = $entitiesLimit;
+        $this->userClient = $userClient;
     }
 
     /**
@@ -96,7 +99,8 @@ class WikidataClient
 
     protected function buildOptions()
     {
-        return [RequestOptions::HEADERS => ['Accept' => 'application/json']];
+        return [RequestOptions::HEADERS => ['Accept' => 'application/json',
+                                            'User-Agent' => $this->userClient,]];
     }
 
     protected function addEntityToQueue($entity)
