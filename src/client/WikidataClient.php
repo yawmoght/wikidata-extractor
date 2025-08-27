@@ -58,6 +58,10 @@ class WikidataClient
         $response = $this->checkRequest(true);
         $this->entities = array();
 
+        if (!empty($response)){
+            $response = $this->entitiesBuilder->buildEntities($response);
+        }
+
         return $response;
     }
 
